@@ -166,4 +166,4 @@ FILLER
 FILLER
 
 ### Video Demonstration
-Coming soon...
+<video src="video_demo_TEST.mov" width="320" height="200" controls preload></video>
