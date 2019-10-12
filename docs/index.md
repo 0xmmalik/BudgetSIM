@@ -166,4 +166,4 @@ FILLER
 FILLER
 
 ### Video Demonstration
-<video src="video_demo_TEST.mov" width="1080" height="720" controls preload></video>
+<video src="video_demo_TEST.mov" width="540" height="360" controls preload></video>
