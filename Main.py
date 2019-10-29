@@ -26,19 +26,27 @@ p_bar = load("img/progress_bar.png")
 #################
 # INSTANTIATING   #
 #################
-FONT = pygame.font.Font("img/pixelated.ttf", 50)
+FONT = pygame.font.Font("img/PressStart2P-Regular.ttf", 30)
 SPINNERS = [(50, 165), (250, 165), (475, 165), (715, 165), (75, 275), (400, 275), (675, 275)]
 values = [14, 14, 14, 14, 14, 14, 15]
 txt = []
 screen = pygame.display.set_mode((1000, 500))
-cursor = load("img/cursor.png").convert_alpha()
 pygame.display.set_caption("Congressional Budget Manager -- MM Olde Games")
-#pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0)) # set base cursor to invisible
+
+# National Threat Safety, Emergency Services, Public Happiness
+metrics = [0, 0, 0]
 
 # Military, Education, Healthcare, Transportation, Public Welfare, Employment, Foreign Relations
+'''
 events = [
-    (opioidEpidemic, (5, 14, 55, 8, 8, 5, 5), "https://www.drugabuse.gov/drugs-abuse/opioids/opioid-overdose-crisis"),
+    (opioidEpidemic, [], "https://www.drugabuse.gov/drugs-abuse/opioids/opioid-overdose-crisis"),
     (iraqWar, (50, 5, 5, 5, 5, 5, 25), "https://en.wikipedia.org/wiki/Iraq_War?scrlybrkr=5065a312")
+    ]
+'''
+
+events = [
+        [opioidEpidemic, [(5, 5, 5, 5, 5, 5, 5), (5, 5, 35, 80, 15, 5, 5), (5, 30, 95, 20, 30, 25, 5)], "https://www.drugabuse.gov/drugs-abuse/opioids/opioid-overdose-crisis"],
+        [iraqWar, [(95, 5, 5, 20, 30, 15, 50), (5, 5, 15, 10, 10, 5, 5), (20, 5, 18, 7, 15, 15, 16)], "https://en.wikipedia.org/wiki/Iraq_War?scrlybrkr=5065a312"]
     ]
 
 for i in range(len(values)):
@@ -46,10 +54,10 @@ for i in range(len(values)):
 
 def checkSpinner(spinner):
     if event.type == MOUSEBUTTONDOWN and pygame.mouse.get_pos()[0] >= spinner[0] and pygame.mouse.get_pos()[0] <= spinner[0] + 42 and pygame.mouse.get_pos()[1] >= spinner[1] and pygame.mouse.get_pos()[1] <= spinner[1] + 38:
-        return("up")
+        return "up"
     elif event.type == MOUSEBUTTONDOWN and pygame.mouse.get_pos()[0] >= spinner[0] and pygame.mouse.get_pos()[0] <= spinner[0] + 42 and pygame.mouse.get_pos()[1] >= spinner[1] + 38 and pygame.mouse.get_pos()[1] <= spinner[1] + 76:
-        return("down")
-    return False
+        return "down"
+    return ""
 
 def checkContinue():
     if event.type == MOUSEBUTTONDOWN and pygame.mouse.get_pos()[1] >= 450:
@@ -64,7 +72,7 @@ def checkInfo():
 def blitSpinners():
     for i in range(len(SPINNERS)):
         screen.blit(spinner, SPINNERS[i])
-        screen.blit(txt[i], (SPINNERS[i][0] + 50, SPINNERS[i][1] + 10))
+        screen.blit(txt[i], (SPINNERS[i][0] + 50, SPINNERS[i][1] + 25))
     screen.blit(cont, (0, 450))
     screen.blit(info, (0, 0))
     #screen.blit(cursor, pygame.mouse.get_pos())
@@ -76,7 +84,6 @@ def blitSpinners():
 initScr = True
 while initScr:
     screen.blit(screen1, (0, 0))
-    screen.blit(cursor, pygame.mouse.get_pos())
     pygame.display.flip()
     for event in pygame.event.get():
         if event.type == MOUSEBUTTONDOWN:
@@ -111,23 +118,15 @@ for i in range(3): # three events will be simulated
                 webbrowser.open(events[eventID][2])
             if event.type == pygame.QUIT:
                 pygame.display.quit()
-    score = 600
-    for i in range(len(values)):
-        score -= abs(values[0] - events[eventID][1][i])
-    score = score // 6 - 60
+    for j in range(len(metrics)):
+        for k in range(len(values)):
+            metrics[j] += (values[k] * events[eventID][1][j][k]) // 100
+    print(metrics)
     viewingScore = True
-    drawingBar = int(score / 40 * 1000)
-    initDrawingBar = drawingBar
-    if drawingBar <= 0:
-        drawingBar = 1
     screen.fill((0, 0, 0))
-    while drawingBar:
-        pygame.event.get()
-        screen.blit(p_bar, (initDrawingBar - drawingBar, 250))
-        sleep(0.005)
-        drawingBar -= 1
-        pygame.display.flip()
-    screen.blit(FONT.render("Event score: " + str(score) + "/40", False, (255, 255, 255)), (0, 0))
+    screen.blit(FONT.render("Safety from Foreign Attacks: " + str(metrics[0]), False, (255, 255, 255)), (20, 20))
+    screen.blit(FONT.render("Emergency Services: " + str(metrics[1]), False, (255, 255, 255)), (20, 60))
+    screen.blit(FONT.render("Public Happiness: " + str(metrics[2]), False, (255, 255, 255)), (20, 100))
     screen.blit(cont, (0, 450))
     pygame.display.flip()
     while viewingScore:
@@ -135,4 +134,5 @@ for i in range(3): # three events will be simulated
         for event in pygame.event.get():
             if checkContinue() and sum(values) == 100:
                 viewingScore = False
+    del events[eventID]
 pygame.display.quit()
