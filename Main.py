@@ -102,15 +102,14 @@ for i in range(3): # three events will be simulated
                     txt[i] = FONT.render(str(values[i]), False, (0, 0, 0))
                 screen.blit(events[eventID][0], (0, 0))
                 blitSpinners()
-            if checkContinue() and sum(values) == 100:
-                settingBudget = False
-            elif checkContinue() and sum(values) != 100:
                 if sum(values) < 100:
                     screen.blit(FONT.render("Need " + str(100 - sum(values)) + " more!", False, (255, 255, 255)), (50, 400))
                     pygame.display.flip()
-                else:
+                elif sum(values) > 100:
                     screen.blit(FONT.render("Need " + str(sum(values) - 100) + " less!", False, (255, 255, 255)), (50, 400))
                     pygame.display.flip()
+            if checkContinue() and sum(values) == 100:
+                settingBudget = False
             if checkInfo():
                 webbrowser.open(events[eventID][2])
             if event.type == pygame.QUIT:
