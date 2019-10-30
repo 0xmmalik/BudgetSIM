@@ -5,7 +5,6 @@ import pygame
 assert pygame.init() == (6, 0)
 from pygame.locals import *
 from random import random, randint
-from time import sleep
 import webbrowser
 
 ##########
@@ -16,6 +15,7 @@ screen1 = load("img/screen1.png")
 
 opioidEpidemic = load("img/opioidepidemic.png")
 iraqWar = load("img/iraqwar.png")
+wildfires = load("img/wildfires.png")
 
 spinner = load("img/spinner.png")
 cont = load("img/continue.png")
@@ -32,21 +32,18 @@ values = [14, 14, 14, 14, 14, 14, 15]
 txt = []
 screen = pygame.display.set_mode((1000, 500))
 pygame.display.set_caption("Congressional Budget Manager -- MM Olde Games")
+tot = [0, 0, 0]
+av = [0, 0, 0]
 
 # National Threat Safety, Emergency Services, Public Happiness
 metrics = [0, 0, 0]
 
 # Military, Education, Healthcare, Transportation, Public Welfare, Employment, Foreign Relations
-'''
-events = [
-    (opioidEpidemic, [], "https://www.drugabuse.gov/drugs-abuse/opioids/opioid-overdose-crisis"),
-    (iraqWar, (50, 5, 5, 5, 5, 5, 25), "https://en.wikipedia.org/wiki/Iraq_War?scrlybrkr=5065a312")
-    ]
-'''
 
 events = [
         [opioidEpidemic, [(5, 5, 5, 5, 5, 5, 5), (5, 5, 35, 80, 15, 5, 5), (5, 30, 95, 20, 30, 25, 5)], "https://www.drugabuse.gov/drugs-abuse/opioids/opioid-overdose-crisis"],
-        [iraqWar, [(95, 5, 5, 20, 30, 15, 50), (5, 5, 15, 10, 10, 5, 5), (20, 5, 18, 7, 15, 15, 16)], "https://en.wikipedia.org/wiki/Iraq_War?scrlybrkr=5065a312"]
+        [iraqWar, [(95, 5, 5, 20, 30, 15, 50), (5, 5, 15, 10, 10, 5, 5), (25, 10, 21, 10, 23, 15, 10)], "https://en.wikipedia.org/wiki/Iraq_War"],
+        [wildfires, [(5, 5, 5, 5, 5, 5, 5), (5, 7, 60, 80, 45, 25, 5), (5, 7, 75, 75, 55, 7, 5)], "https://en.wikipedia.org/wiki/2019_California_wildfires"]
     ]
 
 for i in range(len(values)):
@@ -97,7 +94,7 @@ for i in range(3): # three events will be simulated
     while settingBudget:
         for event in pygame.event.get():
             for i in range(len(SPINNERS)):
-                if checkSpinner(SPINNERS[i]) == "up" and values[i] < 100:
+                if checkSpinner(SPINNERS[i]) == "up" and values[i] < 99:
                     values[i] += 1
                     txt[i] = FONT.render(str(values[i]), False, (0, 0, 0))
                 elif checkSpinner(SPINNERS[i]) == "down" and values[i] > 0:
@@ -121,18 +118,38 @@ for i in range(3): # three events will be simulated
     for j in range(len(metrics)):
         for k in range(len(values)):
             metrics[j] += (values[k] * events[eventID][1][j][k]) // 100
-    print(metrics)
+            tot[j] += events[eventID][1][j][k]
+        av[j] = tot[j] // 7
+    #print(metrics)
     viewingScore = True
     screen.fill((0, 0, 0))
-    screen.blit(FONT.render("Safety from Foreign Attacks: " + str(metrics[0]), False, (255, 255, 255)), (20, 20))
-    screen.blit(FONT.render("Emergency Services: " + str(metrics[1]), False, (255, 255, 255)), (20, 60))
-    screen.blit(FONT.render("Public Happiness: " + str(metrics[2]), False, (255, 255, 255)), (20, 100))
+    for i in range(len(metrics)):
+        if metrics[i] > av[i]:
+            metrics[i] = av[i]
+    screen.blit(FONT.render("Foreign Threat Safety: " + str(metrics[0]) + "/" + str(av[0]), False, (255, 255, 255)), (20, 20))
+    screen.blit(FONT.render("#" * (metrics[0] // 5), False, (50, 255, 50)), (20, 60))
+    screen.blit(FONT.render("Emergency Services: " + str(metrics[1]) + "/" + str(av[1]), False, (255, 255, 255)), (20, 160))
+    screen.blit(FONT.render("#" * (metrics[1] // 5), False, (50, 255, 50)), (20, 200))
+    screen.blit(FONT.render("Public Happiness: " + str(metrics[2]) + "/" + str(av[2]), False, (255, 255, 255)), (20, 300))
+    screen.blit(FONT.render("#" * (metrics[2] // 5), False, (50, 255, 50)), (20, 340))
     screen.blit(cont, (0, 450))
     pygame.display.flip()
     while viewingScore:
         pygame.event.clear()
         for event in pygame.event.get():
-            if checkContinue() and sum(values) == 100:
+            if checkContinue():
                 viewingScore = False
     del events[eventID]
+screen.fill((0, 0, 0))
+finalScore = int(sum(metrics) / sum(av) * 100)
+color = (int(abs(100 - finalScore) / 100 * 255), int(finalScore / 100 * 255), 0)
+screen.blit(FONT.render("Final Score: " + str(finalScore) + "/100", False, color), (20, 100))
+screen.blit(cont, (0, 450))
+pygame.display.flip()
+viewingScore = True
+while viewingScore:
+    pygame.event.clear()
+    for event in pygame.event.get():
+        if checkContinue() and sum(values) == 100:
+            viewingScore = False
 pygame.display.quit()
