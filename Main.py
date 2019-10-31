@@ -124,7 +124,7 @@ for i in range(3): # three events will be simulated
             if checkInfo():
                 webbrowser.open(events[eventID][2])
             if event.type == pygame.QUIT:
-                pygame.display.quit()
+                quit()
     for j in range(len(metrics)):
         for k in range(len(values)):
             metrics[j] += (values[k] * events[eventID][1][j][k]) // 100
