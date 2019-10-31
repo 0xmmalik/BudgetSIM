@@ -28,6 +28,7 @@ wildfires = load("img/wildfires.png")
 
 spinner = load("img/spinner.png")
 cont = load("img/continue.png")
+end = load("img/end.png")
 retry = load("img/retry.png")
 help = load("img/help.png")
 diagram = load("img/diagram.png")
@@ -188,7 +189,7 @@ while playing:
     finalScore = int(sum(metrics) / sum(av) * 100)
     color = (int(abs(100 - finalScore) / 100 * 255), int(finalScore / 100 * 255), 0)
     screen.blit(FONT.render("Final Score: " + str(finalScore) + "/100", False, color), (20, 100))
-    screen.blit(cont, (0, 450))
+    screen.blit(end, (0, 450))
     pygame.display.flip()
     drawingScore = int(finalScore / 100 * 1000)
     dr_init = drawingScore
