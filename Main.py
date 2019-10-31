@@ -1,17 +1,20 @@
 #####################
-# IMPORT STATEMENTS #
+# IMPORT STATEMENTS   #
 #####################
 import pygame
 assert pygame.init() == (6, 0)
 from pygame.locals import *
 from random import random, randint
 import webbrowser
+from time import sleep
 
 ##########
-# IMAGES  #
+# IMAGES    #
 ##########
 load = pygame.image.load
+
 screen1 = load("img/screen1.png")
+instructions = load("img/instructions.png")
 
 opioidEpidemic = load("img/opioidepidemic.png")
 iraqWar = load("img/iraqwar.png")
@@ -21,14 +24,14 @@ spinner = load("img/spinner.png")
 cont = load("img/continue.png")
 info = load("img/info.png")
 
-p_bar = load("img/progress_bar.png")
+scorebar = load("img/scorebar.png")
 
 #################
-# INSTANTIATING   #
+# INSTANTIATING      #
 #################
 FONT = pygame.font.Font("img/PressStart2P-Regular.ttf", 30)
 SPINNERS = [(50, 165), (250, 165), (475, 165), (715, 165), (75, 275), (400, 275), (675, 275)]
-values = [14, 14, 14, 14, 14, 14, 15]
+values = [14, 14, 14, 14, 14, 15, 15]
 txt = []
 screen = pygame.display.set_mode((1000, 500))
 pygame.display.set_caption("Congressional Budget Manager -- MM Olde Games")
@@ -70,7 +73,8 @@ def blitSpinners():
     for i in range(len(SPINNERS)):
         screen.blit(spinner, SPINNERS[i])
         screen.blit(txt[i], (SPINNERS[i][0] + 50, SPINNERS[i][1] + 25))
-    screen.blit(cont, (0, 450))
+    if sum(values) == 100:
+        screen.blit(cont, (0, 450))
     screen.blit(info, (0, 0))
     #screen.blit(cursor, pygame.mouse.get_pos())
     pygame.display.flip()
@@ -79,9 +83,16 @@ def blitSpinners():
 # MAIN FUNCTION  #
 ##################
 initScr = True
+screen.blit(screen1, (0, 0))
+pygame.display.flip()
 while initScr:
-    screen.blit(screen1, (0, 0))
-    pygame.display.flip()
+    for event in pygame.event.get():
+        if event.type == MOUSEBUTTONDOWN:
+            initScr = False
+initScr = True
+screen.blit(instructions, (0, 0))
+pygame.display.flip()
+while initScr:
     for event in pygame.event.get():
         if event.type == MOUSEBUTTONDOWN:
             initScr = False
@@ -125,12 +136,12 @@ for i in range(3): # three events will be simulated
     for i in range(len(metrics)):
         if metrics[i] > av[i]:
             metrics[i] = av[i]
-    screen.blit(FONT.render("Foreign Threat Safety: " + str(metrics[0]) + "/" + str(av[0]), False, (255, 255, 255)), (20, 20))
-    screen.blit(FONT.render("#" * (metrics[0] // 5), False, (50, 255, 50)), (20, 60))
-    screen.blit(FONT.render("Emergency Services: " + str(metrics[1]) + "/" + str(av[1]), False, (255, 255, 255)), (20, 160))
-    screen.blit(FONT.render("#" * (metrics[1] // 5), False, (50, 255, 50)), (20, 200))
-    screen.blit(FONT.render("Public Happiness: " + str(metrics[2]) + "/" + str(av[2]), False, (255, 255, 255)), (20, 300))
-    screen.blit(FONT.render("#" * (metrics[2] // 5), False, (50, 255, 50)), (20, 340))
+    screen.blit(FONT.render("Foreign Threat Safety: " + str(int(metrics[0] / av[0] * 100)) + "/100", False, (255, 255, 255)), (20, 20))
+    screen.blit(FONT.render("#" * int(metrics[0] / av[0] * 30), False, (50, 255, 50)), (20, 60))
+    screen.blit(FONT.render("Emergency Services: " + str(int(metrics[1] / av[1] * 100)) + "/100", False, (255, 255, 255)), (20, 160))
+    screen.blit(FONT.render("#" * int(metrics[1] / av[1] * 30), False, (50, 255, 50)), (20, 200))
+    screen.blit(FONT.render("Public Happiness: " + str(int(metrics[2] / av[2] * 100)) + "/100", False, (255, 255, 255)), (20, 300))
+    screen.blit(FONT.render("#" * int(metrics[2] / av[2] * 30), False, (50, 255, 50)), (20, 340))
     screen.blit(cont, (0, 450))
     pygame.display.flip()
     while viewingScore:
@@ -145,6 +156,14 @@ color = (int(abs(100 - finalScore) / 100 * 255), int(finalScore / 100 * 255), 0)
 screen.blit(FONT.render("Final Score: " + str(finalScore) + "/100", False, color), (20, 100))
 screen.blit(cont, (0, 450))
 pygame.display.flip()
+drawingScore = int(finalScore / 100 * 1000)
+dr_init = drawingScore
+while drawingScore:
+    screen.blit(scorebar, (0, 150))
+    pygame.draw.rect(screen, (0, 0, 0), (dr_init - drawingScore, 150, 1000, 50))
+    pygame.display.flip()
+    drawingScore -= 5
+    pygame.event.get()
 viewingScore = True
 while viewingScore:
     pygame.event.clear()
