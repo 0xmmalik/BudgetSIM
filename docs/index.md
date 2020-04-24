@@ -12,5 +12,8 @@ BudgetSIM is a simple budget simulator which allows young children (intended for
 #### Context
 This game/simulator was created for the Congressional App Challenge of 2019. It will be submitted to Representative David Joyce of Congressional District OH-14. 
 
+### Changelog
+- April 24th, 2020 -- Images optimized; file size reduced by over 19% for images. New release created (v1.1) with optimized images.
+
 ### Video Demonstration
-<video src="https://www.youtube.com/watch?v=BOCazc6rp10" width="540" controls preload></video>
+This video demonstration can be found on [YouTube](https://www.youtube.com/watch?v=BOCazc6rp10).
